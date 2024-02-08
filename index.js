@@ -23,17 +23,22 @@ async function main(currentBookedDate) {
 
     while(true) {
       const date = await checkAvailableDate(sessionHeaders)
-
+        log(`current booked time: ${currentBookedDate}`)
+        const d1 = Date.parse(date);
+        const d2 = Date.parse(currentBookedDate);
+        
       if (!date) {
         log("no dates available")
-      } else if (date > currentBookedDate) {
-        log(`nearest date is further than already booked (${currentBookedDate} vs ${date})`)
-      } else {
+      } else if (d1 < d2) {
         currentBookedDate = date
         const time = await checkAvailableTime(sessionHeaders, date)
-
+        log(`new time:  (${time})`)
+        log(`changing from  (${currentBookedDate} to new date: ${date})`)
+        
         book(sessionHeaders, date, time)
           .then(d => log(`booked time at ${date} ${time}`))
+      } else {
+        log(`nearest date is further than already booked (${currentBookedDate} vs ${date})`)
       }
 
       await sleep(3)
